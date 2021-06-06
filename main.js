@@ -30,11 +30,32 @@ class Blockchain{
 		newBlock.hash = newBlock.calculateHash();
 		this.chain.push(newBlock);
 	}
+	isChainValid(){
+		for(let i = 1; i < this.chain.length; i++){
+			const currentBlock = this.chain[i];
+			const previousBlock = this.chain[i - 1];
+
+			if(currentBlock.hash !== currentBlock.calculateHash()) {
+				return false;
+			}
+			if(currentBlock.previousHash !== previousBlock.hash){
+				return false;
+			}
+		}
+		return true;
+	}
 }
 
 let newCoin = new Blockchain();
 newCoin.addBlock(new Block(1, "06/06/2021", {ammount: 4}));
 newCoin.addBlock(new Block(2, "06/06/2021", {ammount: 10}));
 
-console.log(JSON.stringify(newCoin, null, 4));
+console.log('is blockchain valid? ' + newCoin.isChainValid());
+
+newCoin.chain[1].data = {ammount: 100 } //tampered with chain*
+newCoin.chain[1].hash = newCoin.chain[1].calculateHash(); //tampered with hash*
+
+console.log('is blockchain valid? ' + newCoin.isChainValid());
+
+// console.log(JSON.stringify(newCoin, null, 4)); //correct hash calculations commented out for test
 
